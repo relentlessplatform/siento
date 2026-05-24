@@ -210,7 +210,7 @@ signupForm.addEventListener('submit', async e => {
       setLoading(btn, false); return;
     }
 
-    const email = `${username}@journal.local`;
+    const email = `${username}@journal.app`;
     const { data, error } = await db.auth.signUp({ email, password });
     if (error) { signupError.textContent = error.message; setLoading(btn, false); return; }
 
