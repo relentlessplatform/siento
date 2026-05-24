@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Journal" />
+  <meta name="description" content="Your private journal — thoughts, moments, memories." />
+  <title>Journal</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ───────────────────────────────────────────────────────── -->
+<div id="auth-screen" class="screen active">
+  <div class="auth-bg">
+    <div class="auth-orb orb1"></div>
+    <div class="auth-orb orb2"></div>
+    <div class="auth-orb orb3"></div>
+  </div>
+  <div class="auth-container">
+    <div class="auth-logo">
+      <div class="logo-mark">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4z" fill="url(#logoGrad)"/>
+          <path d="M11 12h10M11 16h7M11 20h8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a78bfa"/>
+              <stop offset="1" stop-color="#60a5fa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="logo-text">Journal</span>
+    </div>
+
+    <div class="auth-card">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign In</button>
+        <button class="auth-tab" data-tab="signup">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active">
+        <div class="form-tagline">Welcome back</div>
+        <div class="input-group">
+          <div class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <input type="text" id="login-username" placeholder="Username" autocomplete="username" required />
+        </div>
+        <div class="input-group">
+          <div class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required />
+          <button type="button" class="toggle-pw" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button type="submit" class="btn-primary">
+          <span>Sign In</span>
+          <div class="btn-loader hidden"></div>
+        </button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form">
+        <div class="form-tagline">Start your journey</div>
+        <div class="input-row">
+          <div class="input-group">
+            <input type="text" id="signup-firstname" placeholder="First Name" required />
+          </div>
+          <div class="input-group">
+            <input type="text" id="signup-lastname" placeholder="Last Name" required />
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <input type="text" id="signup-username" placeholder="Username" autocomplete="username" required />
+        </div>
+        <div class="input-group">
+          <div class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <input type="password" id="signup-password" placeholder="Password" autocomplete="new-password" required />
+          <button type="button" class="toggle-pw" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="auth-error" id="signup-error"></div>
+        <button type="submit" class="btn-primary">
+          <span>Create Account</span>
+          <div class="btn-loader hidden"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP SHELL ─────────────────────────────────────────────────────────── -->
+<div id="app-screen" class="screen">
+
+  <!-- Sidebar (desktop) -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4z" fill="url(#sideLogoGrad)"/>
+          <path d="M11 12h10M11 16h7M11 20h8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="sideLogoGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a78bfa"/>
+              <stop offset="1" stop-color="#60a5fa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>Journal</span>
+      </div>
+      <button id="new-entry-btn" class="sidebar-new-btn" title="New Entry">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-view="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-view="entries">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>All Entries</span>
+      </a>
+      <a href="#" class="nav-item" data-view="moods">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <span>Mood Tracker</span>
+      </a>
+      <a href="#" class="nav-item" data-view="memories">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Memories</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip" id="sidebar-user">
+        <div class="user-avatar" id="sidebar-avatar">J</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">Loading…</div>
+          <div class="user-handle" id="sidebar-handle">@user</div>
+        </div>
+        <button class="logout-btn" id="logout-btn" title="Sign out">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <!-- Top bar (mobile) -->
+    <header id="topbar">
+      <button id="menu-btn" class="icon-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="topbar-title">Journal</div>
+      <button id="topbar-new-btn" class="icon-btn accent">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </header>
+
+    <!-- Dashboard View -->
+    <div id="view-dashboard" class="view active">
+      <div class="view-inner">
+        <div class="dash-greeting-row">
+          <div>
+            <div class="dash-greeting" id="dash-greeting">Good morning</div>
+            <div class="dash-subgreeting" id="dash-name-display">Loading…</div>
+          </div>
+          <div class="dash-date-badge">
+            <div class="badge-day" id="badge-day">Sat</div>
+            <div class="badge-num" id="badge-num">23</div>
+          </div>
+        </div>
+
+        <!-- Quick Write -->
+        <div class="quick-write-card" id="quick-write-trigger">
+          <div class="quick-write-prompt">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            What's on your mind?
+          </div>
+          <div class="quick-write-hint">Tap to write a new entry</div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon" style="--c:#a78bfa">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Entries</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="--c:#34d399">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="--c:#fb923c">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="stat-value" id="stat-photos">0</div>
+            <div class="stat-label">Photos</div>
+          </div>
+        </div>
+
+        <!-- Mood Summary -->
+        <div class="section-header">
+          <h2 class="section-title">This Week's Mood</h2>
+        </div>
+        <div class="mood-week-row" id="mood-week"></div>
+
+        <!-- Recent Entries -->
+        <div class="section-header">
+          <h2 class="section-title">Recent Entries</h2>
+          <a href="#" class="section-link" data-view="entries">See all</a>
+        </div>
+        <div id="recent-entries-list" class="entries-list"></div>
+      </div>
+    </div>
+
+    <!-- All Entries View -->
+    <div id="view-entries" class="view">
+      <div class="view-inner">
+        <div class="view-header-row">
+          <h1 class="view-title">All Entries</h1>
+          <div class="search-bar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Search entries…" />
+          </div>
+        </div>
+        <div id="all-entries-list" class="entries-list"></div>
+        <div id="entries-empty" class="empty-state hidden">
+          <div class="empty-icon">📝</div>
+          <div class="empty-title">No entries yet</div>
+          <div class="empty-sub">Tap + to write your first entry</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mood Tracker View -->
+    <div id="view-moods" class="view">
+      <div class="view-inner">
+        <h1 class="view-title">Mood Tracker</h1>
+        <div class="mood-chart-wrap">
+          <canvas id="mood-chart" height="200"></canvas>
+        </div>
+        <div class="section-header" style="margin-top:32px">
+          <h2 class="section-title">Emotion History</h2>
+        </div>
+        <div id="mood-history-list" class="mood-history"></div>
+      </div>
+    </div>
+
+    <!-- Memories View -->
+    <div id="view-memories" class="view">
+      <div class="view-inner">
+        <h1 class="view-title">Memories</h1>
+        <div id="memories-grid" class="memories-grid"></div>
+        <div id="memories-empty" class="empty-state hidden">
+          <div class="empty-icon">🖼️</div>
+          <div class="empty-title">No photos yet</div>
+          <div class="empty-sub">Add photos to your entries to see them here</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Nav -->
+  <nav id="bottom-nav">
+    <a href="#" class="bnav-item active" data-view="dashboard">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#" class="bnav-item" data-view="entries">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Entries</span>
+    </a>
+    <a href="#" class="bnav-item bnav-center" id="bnav-new">
+      <div class="bnav-fab">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+    </a>
+    <a href="#" class="bnav-item" data-view="moods">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <span>Mood</span>
+    </a>
+    <a href="#" class="bnav-item" data-view="memories">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Photos</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ── NEW ENTRY MODAL ────────────────────────────────────────────────────── -->
+<div id="entry-modal" class="modal-overlay">
+  <div class="modal-sheet" id="entry-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <button class="modal-close" id="modal-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-title" id="modal-title">New Entry</div>
+      <button class="modal-save" id="modal-save">Save</button>
+    </div>
+
+    <div class="modal-body" id="modal-body">
+      <!-- Date / Time -->
+      <div class="entry-meta-row">
+        <div class="entry-meta-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="datetime-local" id="entry-date" />
+        </div>
+      </div>
+
+      <!-- Title -->
+      <input type="text" class="entry-title-input" id="entry-title" placeholder="Title (optional)" />
+
+      <!-- Text body -->
+      <textarea class="entry-body-input" id="entry-body" placeholder="What's on your mind?"></textarea>
+
+      <!-- Emotion -->
+      <div class="entry-section-label">How are you feeling?</div>
+      <div class="emotion-picker" id="emotion-picker">
+        <button class="emotion-btn" data-emotion="happy" title="Happy">😊</button>
+        <button class="emotion-btn" data-emotion="excited" title="Excited">🤩</button>
+        <button class="emotion-btn" data-emotion="grateful" title="Grateful">🥰</button>
+        <button class="emotion-btn" data-emotion="calm" title="Calm">😌</button>
+        <button class="emotion-btn" data-emotion="neutral" title="Neutral">😐</button>
+        <button class="emotion-btn" data-emotion="tired" title="Tired">😴</button>
+        <button class="emotion-btn" data-emotion="sad" title="Sad">😢</button>
+        <button class="emotion-btn" data-emotion="anxious" title="Anxious">😰</button>
+        <button class="emotion-btn" data-emotion="angry" title="Angry">😤</button>
+        <button class="emotion-btn" data-emotion="sick" title="Sick">🤒</button>
+      </div>
+
+      <!-- Energy / State -->
+      <div class="entry-section-label">Energy level</div>
+      <div class="energy-picker" id="energy-picker">
+        <button class="energy-btn" data-level="1" title="Very low">
+          <div class="energy-bar"><div class="energy-fill" style="height:20%"></div></div>
+          <span>Low</span>
+        </button>
+        <button class="energy-btn" data-level="2" title="Low">
+          <div class="energy-bar"><div class="energy-fill" style="height:40%"></div></div>
+          <span></span>
+        </button>
+        <button class="energy-btn" data-level="3" title="Medium">
+          <div class="energy-bar"><div class="energy-fill" style="height:60%"></div></div>
+          <span>Mid</span>
+        </button>
+        <button class="energy-btn" data-level="4" title="High">
+          <div class="energy-bar"><div class="energy-fill" style="height:80%"></div></div>
+          <span></span>
+        </button>
+        <button class="energy-btn" data-level="5" title="Very high">
+          <div class="energy-bar"><div class="energy-fill" style="height:100%"></div></div>
+          <span>High</span>
+        </button>
+      </div>
+
+      <!-- Location -->
+      <div class="entry-section-label">Location</div>
+      <div class="location-row">
+        <div class="input-group compact">
+          <div class="input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <input type="text" id="entry-location" placeholder="Add location…" />
+        </div>
+        <button class="detect-location-btn" id="detect-location" title="Use current location">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </button>
+      </div>
+
+      <!-- Song -->
+      <div class="entry-section-label">Song / Track</div>
+      <div class="input-group compact">
+        <div class="input-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <input type="text" id="entry-song" placeholder="What are you listening to?" />
+      </div>
+
+      <!-- Images -->
+      <div class="entry-section-label">Photos</div>
+      <div class="photo-upload-area" id="photo-drop-zone">
+        <input type="file" id="photo-input" accept="image/*" multiple hidden />
+        <button class="photo-add-btn" id="photo-add-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Add Photos
+        </button>
+        <div id="photo-preview" class="photo-preview"></div>
+      </div>
+
+      <!-- Tags -->
+      <div class="entry-section-label">Tags</div>
+      <div class="tags-input-wrap" id="tags-wrap">
+        <div id="tags-list" class="tags-list"></div>
+        <input type="text" id="tags-input" placeholder="Add tag…" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ENTRY DETAIL MODAL ─────────────────────────────────────────────────── -->
+<div id="detail-modal" class="modal-overlay">
+  <div class="modal-sheet detail-sheet" id="detail-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <button class="modal-close" id="detail-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-title">Entry</div>
+      <button class="modal-delete-btn" id="detail-delete">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ──────────────────────────────────────────────────────────────── -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- ── MOBILE MENU OVERLAY ────────────────────────────────────────────────── -->
+<div id="mobile-menu-overlay" class="mobile-menu-overlay"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
